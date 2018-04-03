@@ -8,13 +8,14 @@ import pandas as pd
 parser = argparse.ArgumentParser()
 parser.add_argument("module")
 parser.add_argument("--optimize", action="store_true")
+parser.add_argument("--limit_n_train", type=int,default=800)
 args = parser.parse_args()
 
 m = importlib.import_module(args.module)
 
 np.random.seed(8)
 
-n_list = [10, 20, 40, 80, 160, 320, 640, 1280, 2560]
+n_list = [100*2**i for i in range(int(np.log2(args.limit_n_train/100)) + 1)]
 #n_list = [10, 20]
 n_test = 100
 X = 10 * np.random.random((np.max(n_list), 1))
