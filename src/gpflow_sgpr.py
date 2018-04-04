@@ -1,21 +1,16 @@
 import gpflow
 import numpy as np
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import RBF
 
-def make_model(X, y, optimize, variance, lengthscale, noise_variance):
-    k = gpflow.kernels.RBF(input_dim=1, variance=variance, lengthscales=lengthscale)
-    m = gpflow.models.SGPR(X, y[:,np.newaxis], Z=X[np.random.choice(X.shape[0], 10),:], kern=k)
-    m.likelihood.variance = noise_variance
+from gpflow_basic import predict, show_model
+
+def make_model(X, y, optimize, lengthscale, variance, noise_variance, n_inducing_inputs):
+    kernel = gpflow.kernels.RBF(input_dim=X.shape[1], lengthscales=lengthscale, variance=variance)
+    model = gpflow.models.SGPR(X, y[:,np.newaxis], Z=X[np.random.choice(X.shape[0], n_inducing_inputs),:], kern=kernel)
+    model.likelihood.variance = noise_variance
     if optimize:
-        gpflow.train.ScipyOptimizer().minimize(m)
+        gpflow.train.ScipyOptimizer().minimize(model)
+    return model
 
-    return m
+def parse_make_model_option(s):
+    return {"n_inducing_inputs": int(s)}
 
-def predict(X, m):
-    p =  m.predict_y(X)
-    return p[0][:,0], np.sqrt(p[1][:,0])
-
-
-def show_model(m):
-    print(m.as_pandas_table())

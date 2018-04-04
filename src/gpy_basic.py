@@ -1,8 +1,8 @@
 import numpy as np
 import GPy
 
-def make_model(X, y, optimize, variance, lengthscale, noise_variance):
-    k = GPy.kern.RBF(input_dim=1, variance=variance, lengthscale=lengthscale)
+def make_model(X, y, optimize, lengthscale, variance, noise_variance):
+    k = GPy.kern.RBF(input_dim=X.shape[1], lengthscale=lengthscale, variance=variance)
     m = GPy.models.GPRegression(X, y[:,np.newaxis], k)
     m.likelihood.variance = noise_variance
     if optimize:
