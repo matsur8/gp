@@ -10,7 +10,7 @@ def make_model(X, y, optimize, lengthscale, variance, noise_variance):
     return m
 
 def predict(X, m):
-    p =  m.predict_noiseless(X)
+    p =  m.predict(X)
     return p[0][:,0], np.sqrt(p[1][:,0])
 
 def show_model(m):
