@@ -31,7 +31,7 @@ else:
 
 #setting for benchmark
 n_train_list = [100*2**i for i in range(int(np.log2(args.limit_n_train/100)) + 1)]
-n_test = 2000
+n_test = 1000
 dim = 3
 T = 10 #number of experiments
 
@@ -51,8 +51,8 @@ else:
 rs = np.random.RandomState(1252)
 
 res = []
-for n_train in n_train_list:
-    for t in range(T):
+for t in range(T):
+    for n_train in n_train_list:
 
         #sample data
         #Use rs to generate random-numbers.

@@ -1,2 +1,2 @@
-function [] = gpml_setup()
-  addpath(genpath("gpml"))
+function [r] = gpml_setup()
+  r = addpath(genpath("gpml"));
