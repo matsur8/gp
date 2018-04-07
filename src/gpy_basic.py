@@ -14,7 +14,7 @@ def predict(X, m):
     return p[0][:,0], np.sqrt(p[1][:,0])
 
 def show_model(m):
-    print(m[""])
+    print(m)
 
 
 
