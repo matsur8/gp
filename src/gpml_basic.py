@@ -1,8 +1,8 @@
 import numpy as np
 from oct2py import octave
 
-octave.addpath("src")
-octave.gpml_setup()
+octave.addpath("src", verbose=False)
+octave.gpml_setup(verbose=False)
 
 def make_model(X, y, optimize, lengthscale, variance, noise_variance):
     if optimize:

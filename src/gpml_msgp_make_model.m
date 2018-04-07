@@ -1,10 +1,16 @@
-function [hyp] = gpml_msgp_make_model(x,y,grid)
+function [hyp] = gpml_msgp_make_model(hyp, x,y,n_grid)
   %addpath(genpath("gpml"))
-  xg = apxGrid('create',x,true,grid);
+  xg = apxGrid('create',x,true,n_grid);
 
-  cov = {{@covSEiso},{@covSEiso}}; covg = {@apxGrid,cov,xg};
+  dim = size(x, 2);
+  cov = cell(dim, 1);
+  for i = 1:dim
+    cov(i,1) = {{@covSEiso}};
+  endfor
+
+  covg = {@apxGrid,cov,xg};
   mean = {@meanZero}; lik = {@likGauss};
-  hyp.cov = zeros(4,1); hyp.mean = []; hyp.lik = log(0.1);
+  %hyp.cov = zeros(2*dim,1); hyp.mean = []; hyp.lik = log(0.1);
 
   opt.cg_maxit = 200; opt.cg_tol = 5e-3;
   infg = @(varargin) infGaussLik(varargin{:},opt);

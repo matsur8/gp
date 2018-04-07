@@ -30,11 +30,11 @@ else:
 
 #setting for benchmark
 n_train = 100
-n_test = 20
-dim = 3
+n_test = 100
+dim = 1
 
-lengthscale_true = 2.0
-variance_true = 0.8
+lengthscale_true = 1.0
+variance_true = 1.0
 noise_variance_true = 0.2
 
 if args.optimize:
@@ -49,7 +49,7 @@ else:
 #sample data
 rs = np.random.RandomState(1252)
 n = n_train + n_test
-X = 10 * rs.random_sample((n, dim))
+X = 10 * rs.normal(size=(n,dim))#rs.random_sample((n, dim))
 k = GPy.kern.RBF(input_dim=dim, lengthscale=lengthscale_true, variance=variance_true)
 cov = k.K(X,X) 
 y = rs.multivariate_normal(np.zeros(n), cov) + np.sqrt(noise_variance_true) * rs.normal(size=n)
@@ -63,7 +63,7 @@ y_predict_mean, y_predict_std = m.predict(X_test, model, **predict_option)
 MSE = ((y_test - y_predict_mean)**2).mean()
 MLL = (0.5 * np.log(y_predict_std**2) + (y_test - y_predict_mean)**2 / (2*y_predict_std**2)).mean()
         
-print(y_predict_mean)
+print(y_predict_mean[:5])
 print(y_predict_std)
 print(MSE, MLL)
 m.show_model(model)
