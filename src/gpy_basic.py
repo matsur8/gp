@@ -17,7 +17,7 @@ def show_model(model):
     print(model)
 
 def get_hyp(model):
-    return {"length_scale": model.rbf.lengthscale.values[0],
+    return {"lengthscale": model.rbf.lengthscale.values[0],
             "variance": model.rbf.variance.values[0],
             "noise_variance": model.likelihood.variance.values[0]}
 

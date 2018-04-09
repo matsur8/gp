@@ -24,6 +24,7 @@ for path in path_list:
 plt.legend(loc=2)
 plt.xlabel("number of training points")
 plt.ylabel("time (s)")
+plt.tight_layout()
 plt.savefig("time_optimize.png")
 plt.close()
 
@@ -45,6 +46,7 @@ plt.legend(loc=2)
 #, bbox_to_anchor=(0.5, -0.1))
 plt.xlabel("number of training points")
 plt.ylabel("time (s)")
+plt.tight_layout()
 plt.savefig("time.png")
 
 

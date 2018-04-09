@@ -1,10 +1,12 @@
 import argparse
+import datetime
 import importlib
 import time
 
 import numpy as np
 import pandas as pd
 import GPy
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("module")
@@ -32,11 +34,11 @@ else:
 #setting for benchmark
 n_train_list = [100*2**i for i in range(int(np.log2(args.limit_n_train/100)) + 1)]
 n_test = 1000
-dim = 3
-T = 10 #number of experiments
+dim = 1
+T = 1 #number of experiments
 
-lengthscale_true = 2.0
-variance_true = 0.8
+lengthscale_true = 3.0
+variance_true = 2.0
 noise_variance_true = 0.2
 
 if args.optimize:
@@ -51,8 +53,8 @@ else:
 rs = np.random.RandomState(1252)
 
 res = []
-for t in range(T):
-    for n_train in n_train_list:
+for n_train in n_train_list:
+    for t in range(T):
 
         #sample data
         #Use rs to generate random-numbers.
@@ -79,21 +81,30 @@ for t in range(T):
         #MSLL = (0.5 * np.log(y_predict_std**2 / np.var(y_train)) + (y_test - y_predict_mean)**2 / (2*y_predict_std**2) - (y_test - y_train.mean())**2 / (2*np.var(y_train))).mean()
         MLL = (0.5 * np.log(y_predict_std**2) + (y_test - y_predict_mean)**2 / (2*y_predict_std**2)).mean()
         
-        res.append((n_train, n_test, t, MSE, MLL, e_make_model_time - s_make_model_time, e_predict_time - s_predict_time))
+        hyp = m.get_hyp(model)
+        res.append((n_train, n_test, t, MSE, MLL, e_make_model_time - s_make_model_time, e_predict_time - s_predict_time, 
+                    e_make_model_time - s_make_model_time +  e_predict_time - s_predict_time,
+                    hyp["lengthscale"], hyp["variance"], hyp["noise_variance"]))
 
 
 res = pd.DataFrame(res)
-res.columns = ["n_train", "n_test", "t", "SMSE", "MSLL", "time_make_model", "time_predict"]
-res["time_total"] = res["time_make_model"] + res["time_predict"]
+res.columns = ["n_train", "n_test", "t", "MSE", "MLL", "time_make_model", "time_predict",
+               "time_total", "lengthscale", "variance", "noise_variance"]
+res.insert(0, "noise_variance_true", noise_variance_true)
+res.insert(0, "variance_true", variance_true)
+res.insert(0, "lengthscale_true", lengthscale_true)
 res.insert(0, "predict_option", args.predict_option)
 res.insert(0, "make_model_option", args.make_model_option)
 res.insert(0, "optimize", args.optimize)
 res.insert(0, "module", args.module)
 
-res.to_csv("results/" 
-           + args.module 
-           + ("_optimize" if args.optimize else "")  
-           + ("_" + args.make_model_option if args.make_model_option is not None else "") 
-           + ("_" + args.predict_option if args.predict_option is not None else "") 
-           + ".csv", 
-           index=False)
+now = datetime.datetime.now()
+
+res.to_csv("results/"
+    + args.module
+    + ("_optimize" if args.optimize else "")
+    + ("_" + args.make_model_option.replace(" ", "+") if args.make_model_option is not None else "")
+    + ("_" + args.predict_option.replace(" ", "+") if args.predict_option is not None else "")
+    + "_{:%Y%m%d%H%M%S}".format(now)
+    + ".csv",
+    index=False)

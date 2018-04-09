@@ -17,4 +17,8 @@ def show_model(model):
     print(model.as_pandas_table())
 
 def get_hyp(model):
-    return model
+    model_tbl = model.as_pandas_table()
+    return {"lengthscale": model_tbl.loc["GPR/kern/lengthscales", "value"]*1,
+            "variance": model_tbl.loc["GPR/kern/variance", "value"]*1,
+            "noise_variance": model_tbl.loc["GPR/likelihood/variance", "value"]*1}
+

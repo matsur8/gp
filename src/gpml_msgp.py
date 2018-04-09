@@ -18,26 +18,25 @@ def make_model(X, y, optimize, lengthscale, variance, noise_variance, n_grid):
                "variance": np.prod([np.exp(hyp_gpml["cov"][2*i+1,0] * 2) for i in range(X.shape[1])]),
                "noise_variance": np.exp(hyp_gpml["lik"] * 2)}
     else:
-        hyp = {"lengthscale": lengthscale,
+        hyp = {"lengthscale": [lengthscale]*X.shape[1],
                "variance": variance,
                "noise_variance": noise_variance}
     return (hyp, X, y)
 
 def predict(X, model, n_grid):
     hyp, X_train, y_train = model
-    cov = np.ones((X.shape[1],1))
+    cov = np.ones((2*X.shape[1],1))
     for i in range(X.shape[1]):
         cov[2*i,0] = np.log(hyp["lengthscale"][i])
         cov[2*i+1,0] = 0.5 * np.log(hyp["variance"]) / X.shape[1]
     hyp_gpml = {"cov": cov,
                 "mean": [],
                 "lik": 0.5 * np.log(hyp["noise_variance"])}
-    ym, ys2 =  octave.gpml_msgp_predict(hyp_gpml, X_train, y_train[:,np.newaxis], n_grid, nout=2)
+    ym, ys2 =  octave.gpml_msgp_predict(hyp_gpml, X_train, y_train[:,np.newaxis], [n_grid], nout=2)
     return ym[:,0], np.sqrt(ys2[:,0])
 
 def show_model(model):
     print(model[0])
-
 
 def get_hyp(model):
     return model[0]
