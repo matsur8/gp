@@ -1,15 +1,16 @@
 import numpy as np
 from oct2py import octave
 
-octave.addpath("src", verbose=False)
-octave.gpml_setup(verbose=False)
+octave.addpath("src")
+octave.gpml_setup()
 
 def make_model(X, y, optimize, lengthscale, variance, noise_variance):
     if optimize:
         hyp_gpml = {"cov": np.array([np.log(lengthscale), 
-                            0.5 * np.log(variance)])[:,np.newaxis],
+                                     0.5 * np.log(variance)])[:,np.newaxis],
                     "mean": [],
                     "lik": 0.5 * np.log(noise_variance)}
+
         hyp_gpml = octave.gpml_basic_make_model(hyp_gpml, X, y[:,np.newaxis])
         hyp = {"lengthscale": np.exp(hyp_gpml["cov"][0,0]),
                "variance": np.exp(hyp_gpml["cov"][1,0] * 2),
@@ -27,9 +28,11 @@ def predict(X, model):
                 "mean": [],
                 "lik": 0.5 * np.log(hyp["noise_variance"])}
     ym, ys2 = octave.gpml_basic_predict(hyp_gpml, X_train, y_train[:,np.newaxis], X, nout=2)
-    #ym = octave.gpml_basic_predict(hyp_gpml, X_train, y_train[:,np.newaxis], X)
     return ym[:,0], np.sqrt(ys2[:,0])
 
 def show_model(model):
     print(model[0])
+
+def get_hyp(model):
+    return model[0]
 
