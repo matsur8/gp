@@ -19,9 +19,7 @@ variance_true = 2.0
 noise_variance_true = 0.2
 
 
-rs = np.random.RandomState()#1252)
-
-res = []
+rs = np.random.RandomState(3152)
 
 #sample data
 #Use rs to generate random-numbers.
@@ -63,4 +61,5 @@ plt.show()
 
 print(f.var())
 print(f2.var())
-print(np.mean(np.abs(cov - cov2)))
+print(np.max(np.abs(cov - cov2)))
+print(np.max(np.abs(cov - cov2)/np.abs(cov)))
