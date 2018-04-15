@@ -3,7 +3,7 @@ import argparse
 import gpflow
 import numpy as np
 
-from gpflow_basic import predict, show_model
+from gpflow_exact import predict, show_model
 
 def make_model(X, y, optimize, variance, lengthscale, noise_variance, n_inducing_inputs, fix_inducing_inputs):
     kernel = gpflow.kernels.RBF(input_dim=X.shape[1], lengthscales=lengthscale, variance=variance)

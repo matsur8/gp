@@ -1,7 +1,7 @@
 import numpy as np
 from oct2py import octave
 
-from gpml_basic import show_model, get_hyp
+from gpml_exact import show_model, get_hyp
 
 octave.addpath("src")
 octave.gpml_setup()

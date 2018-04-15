@@ -3,7 +3,7 @@ import argparse
 import numpy as np
 import GPy
 
-from gpy_basic import predict, show_model, get_hyp
+from gpy_exact import predict, show_model, get_hyp
 
 def make_model(X, y, optimize, lengthscale, variance, noise_variance, n_inducing_inputs, fix_inducing_inputs):
     kernel = GPy.kern.RBF(input_dim=X.shape[1], lengthscale=lengthscale, variance=variance)
