@@ -11,7 +11,7 @@ def make_model(X, y, optimize, lengthscale, variance, noise_variance):
                     "mean": [],
                     "lik": 0.5 * np.log(noise_variance)}
 
-        hyp_gpml = octave.gpml_basic_make_model(hyp_gpml, X, y[:,np.newaxis])
+        hyp_gpml = octave.gpml_exact_make_model(hyp_gpml, X, y[:,np.newaxis])
         hyp = {"lengthscale": np.exp(hyp_gpml["cov"][0,0]),
                "variance": np.exp(hyp_gpml["cov"][1,0] * 2),
                "noise_variance": np.exp(hyp_gpml["lik"] * 2)}
@@ -27,7 +27,7 @@ def predict(X, model):
                                  0.5 * np.log(hyp["variance"])])[:,np.newaxis],
                 "mean": [],
                 "lik": 0.5 * np.log(hyp["noise_variance"])}
-    ym, ys2 = octave.gpml_basic_predict(hyp_gpml, X_train, y_train[:,np.newaxis], X, nout=2)
+    ym, ys2 = octave.gpml_exact_predict(hyp_gpml, X_train, y_train[:,np.newaxis], X, nout=2)
     return ym[:,0], np.sqrt(ys2[:,0])
 
 def show_model(model):
