@@ -1,6 +1,10 @@
 import glob
 
+import matplotlib
+matplotlib.use("agg")
 import matplotlib.pyplot as plt
+
+
 import numpy as np
 import pandas as pd
 
@@ -18,7 +22,7 @@ for path in path_list:
         beta = np.linalg.solve(X.transpose().dot(X), X.transpose().dot(y))
         #beta =  beta / ((np.ones(5)*n_max)**[4,3,2,1,0])
         print(beta)
-        plt.loglog(d[n_col], d[time_col], "o", label=d["module"][0] + ("_optimize" if d["optimize"][0] else ""))
+        plt.loglog(d[n_col], d[time_col], "o", label=d["module"][0] + str(d["make_model_option"][0]) + ("_optimize" if d["optimize"][0] else ""))
 
 
 plt.legend(loc=2)
@@ -39,7 +43,7 @@ for path in path_list:
         beta = np.linalg.solve(X.transpose().dot(X), X.transpose().dot(y))
         #beta =  beta / ((np.ones(5)*n_max)**[4,3,2,1,0])
         print(beta)
-        plt.loglog(d[n_col], d[time_col], "o", label=d["module"][0] + ("_optimize" if d["optimize"][0] else ""))
+        plt.loglog(d[n_col], d[time_col], "o", label=d["module"][0] + str(d["make_model_option"][0]) + ("_optimize" if d["optimize"][0] else ""))
 
 
 plt.legend(loc=2)
