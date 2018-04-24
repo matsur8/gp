@@ -5,8 +5,8 @@ import time
 
 import numpy as np
 import pandas as pd
-import GPy
 
+from generate_data import generate_data_1d
 
 parser = argparse.ArgumentParser()
 parser.add_argument("module")
@@ -35,11 +35,11 @@ else:
 n_train_list = [100*2**i for i in range(int(np.log2(args.limit_n_train/100)) + 1)]
 n_test = 1000
 dim = 1
-T = 10 #number of experiments
+T = 3 #number of experiments
 
-lengthscale_true = 3.0
-variance_true = 2.0
-noise_variance_true = 0.2
+lengthscale_true = 0.0005
+variance_true = 1.2
+noise_variance_true = 0.8
 
 if args.optimize:
     lengthscale_init = 1.0
@@ -52,15 +52,6 @@ else:
 
 rs = np.random.RandomState(1252)
 
-def make_rbf_feature(x, ls, v, delta, xgrid):
-   return np.sqrt(delta * v) * (2.0 / (np.pi * ls**2))**0.25 * np.exp(-(xgrid - x)**2.0/ls**2.0)
-
-l = -15
-u = 25
-delta = 0.01
-xgrid = np.arange(l, u, delta)
-n_grid = xgrid.shape[0]
-
 res = []
 for n_train in n_train_list:
     for t in range(T):
@@ -68,15 +59,8 @@ for n_train in n_train_list:
         #sample data
         #Use rs to generate random-numbers.
         n = n_train + n_test
-        X = 10 * rs.random_sample((n, dim))
+        X, y, f = generate_data_1d(lengthscale_true, variance_true, noise_variance_true, n, random_state=rs)
 
-        w = rs.normal(size=n_grid)
-        f = np.array([make_rbf_feature(x[0], lengthscale_true, variance_true, delta, xgrid).dot(w) for x in X])
-
-        #k = GPy.kern.RBF(input_dim=dim, lengthscale=lengthscale_true, variance=variance_true)
-        #cov = k.K(X,X) 
-        #y = rs.multivariate_normal(np.zeros(n), cov) + np.sqrt(noise_variance_true) * rs.normal(size=n)
-        y = f + np.sqrt(noise_variance_true) * rs.normal(size=n)
         X_train, X_test, y_train, y_test = X[:n_train], X[n_train:], y[:n_train], y[n_train:]
 
         #make model
